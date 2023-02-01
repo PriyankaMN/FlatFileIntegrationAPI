@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<http:listener-config name="wh-info-sys-sapi-httpListenerConfig">
+        <http:listener-connection host="${http.host}" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="wh-info-sys-sapi-config" api="wh-info-sys-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+   <db:config name="Database_Config" doc:name="Database Config" doc:id="da5f2604-00f4-4800-9a47-6896291b5c9a" >
+		<db:my-sql-connection host="${database.hostName}" port="${database.port}" user="${database.user}" password="${database.password}" database="${database.dB}" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="7ccae726-ff95-4c73-be37-8fa3284a580c" file="config/${mule.env}.yaml" />
+</mule>

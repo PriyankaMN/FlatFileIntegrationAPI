@@ -1,0 +1,16 @@
+#%RAML 1.0 DataType
+displayName: healthcheckStatusDataType
+description: Defined the fields for checking application status
+
+type: 
+  properties:
+    Status:
+      type: string
+      enum:
+        - UP
+        - DOWN
+      required: true
+      description: indicates whether able to connect to the end system
+    Message?:
+      type: string
+      description: error message in case of connectivity failure

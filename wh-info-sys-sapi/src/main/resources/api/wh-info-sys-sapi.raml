@@ -1,0 +1,48 @@
+#%RAML 1.0
+title: wh-info-sys-sapi
+description: This is a system API for employee.
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/923ebfa0-7155-41fc-a3cc-e94485a21279 # baseUri: http://localhost:8081/api/vacationAbsent
+version: v1
+
+uses:
+  httpstatuslib: exchange_modules/23c10d0e-83e2-4fc7-b0db-8d67abd2c4f8/httpstatuscodes-datatypes/1.0.0/httpstatuscodes-datatypes.raml
+
+types:
+  whdetails: !include dataTypes/whInfoDataType.raml
+  HealthCheckStatus: !include dataTypes/healthcheckDataType.raml
+
+  
+/whInfo:
+  get:
+    description: get the data from employees vacation database
+    responses:
+      200:
+        body:
+          application/json:
+            type : whdetails
+            example: !include examples/whInfoExample.json
+              
+      404:
+        body:
+          application/json:
+            type: httpstatuslib.404
+      500:
+        body:
+          application/json:
+            type: httpstatuslib.500
+
+/healthcheck:
+  get:
+    description: To check the connection with beeline application
+    responses:
+      200:
+        body:
+          application/json:
+            type: HealthCheckStatus
+            example: !include examples/healthSuccess.json
+      500:
+        body:
+          application/json:
+            type: HealthCheckStatus
+            example: !include /examples/healthErrorStatus.json 
+              

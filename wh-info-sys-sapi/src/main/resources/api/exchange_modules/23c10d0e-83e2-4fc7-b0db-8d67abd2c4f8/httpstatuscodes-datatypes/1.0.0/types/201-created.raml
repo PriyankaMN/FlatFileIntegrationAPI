@@ -1,0 +1,14 @@
+#%RAML 1.0 DataType
+type : object
+
+description: Representation of Created - See https://tools.ietf.org/html/rfc7231#section-6.3.2
+displayName: 201 - Created
+
+properties:
+  message:
+    displayName: Message
+    description: The Http status code message
+    type: string
+    required: true
+example:
+  !include ../examples/201-created.json

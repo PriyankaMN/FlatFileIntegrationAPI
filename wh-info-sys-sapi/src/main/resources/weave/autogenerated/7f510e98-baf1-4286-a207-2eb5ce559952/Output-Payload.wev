@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_7f510e98_baf1_4286_a207_2eb5ce559952_Output_Payload = {
+  wh: Number, 
+  wh_name: String, 
+  wh_live_ind: String, 
+  warehouse_code: Number, 
+  facility: Number, 
+  _?: Any
+} {"description": "Defines the response fields of warehouse database"}
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="main-suite.xml" />
+	<munit:test name="get:\whInfo:wh-info-sys-sapi-config-test" doc:id="e8275143-73b3-48fe-9a7d-bb71f6c2c690" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="18e60ebf-ffd5-42af-9db9-1304e2816871">
+				<munit:payload value="#[readUrl('classpath://getwhInfowhinfosyssapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getwhInfowhinfosyssapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getwhInfowhinfosyssapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\whInfo:wh-info-sys-sapi-config" doc:id="8833e498-60b5-43e0-9419-6008831052e7" name="get:\whInfo:wh-info-sys-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="020e15c5-fb11-480a-9ee5-da78c7d7f3c7" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\healthcheck:wh-info-sys-sapi-config-test" doc:id="6a79b673-e3e1-462f-8e6f-d902f4bb6181" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="83b83597-f758-46bd-a39a-276166b938c5" >
+				<munit:payload value="#[readUrl('classpath://gethealthcheckwhinfosyssapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://gethealthcheckwhinfosyssapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://gethealthcheckwhinfosyssapiconfigtest\set-event_variable_1.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\healthcheck:wh-info-sys-sapi-config" doc:id="a8d0a8c3-4280-4410-bcd6-5fdc225e7f5a" name="get:\healthcheck:wh-info-sys-sapi-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8555584a-6391-4549-866d-b61c232df93e" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

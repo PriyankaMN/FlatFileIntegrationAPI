@@ -1,0 +1,15 @@
+#%RAML 1.0 Library
+
+types:
+  200: 
+    type: !include types/200-successful.raml
+  201: 
+    type: !include types/201-created.raml
+  400: 
+    type: !include types/400-bad-request.raml
+  401: 
+    type: !include types/401-unauthorized.raml
+  404: 
+    type: !include types/404-not-found.raml
+  500: 
+    type: !include types/500-internal-server-error.raml

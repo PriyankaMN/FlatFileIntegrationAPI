@@ -1,0 +1,12 @@
+#%RAML 1.0 DataType
+type: object
+
+description: Representation of Bad Request - See https://tools.ietf.org/html/rfc7231#section-6.5.1
+displayName: 400 - Bad request
+
+properties: 
+  message:
+    type: string
+    displayName: Message
+    description: The HTTP status code message
+example: !include ../examples/400-bad-request.json  

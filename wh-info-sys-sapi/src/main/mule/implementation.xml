@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="getWh_info" doc:id="7f510e98-baf1-4286-a207-2eb5ce559952" >
+		<db:select doc:name="Select" doc:id="5715e3f0-4a8e-4218-a790-6a48c51970ea" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from wh_info]]></db:sql>
+		</db:select>
+		<ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	CorelationId : vars.CorelationId,
+    payload : payload
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c24ad6ef-748b-4180-a5ca-db7602de0d0c" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+	</sub-flow>
+	<sub-flow name="HealthCheck_Flow" doc:id="00a2ff67-4ee8-4a2a-a265-8d6e5c2ed9f0" >
+		<try doc:name="Try" doc:id="7c90ce62-386d-4f89-a05f-77f8f4d23903" >
+			<db:select doc:name="Select" doc:id="fee21815-7950-47b3-bf8d-822918fc5a97" config-ref="Database_Config">
+				<db:sql ><![CDATA[select * from wh_info]]></db:sql>
+			</db:select>
+			<ee:transform doc:name="Transform Message" doc:id="740e1538-2143-4278-a122-d7f811f98ca6" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	CorelationId : vars.CorelationId,
+  	Status: "UP"
+}
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="fbbd9bd8-0747-4237-a281-41850394bd28" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	CorelationId : vars.CorrelationId,&#10;  	Status: "UP"&#10;}]'/>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="40b6834f-0a67-4d78-bfa3-cbdd8a81c764" >
+					<ee:transform doc:name="Transform Message" doc:id="d2ce5ea1-8947-415a-b7e6-b5bad66b4ebe" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "CorelationId" : vars.CorelationId,
+  "Status": "DOWN",
+  "Message": "Not able to connect to DataBase"
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="626d1179-ca72-4ef8-8ee2-724837db5209" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "CorelationId" : vars.CorelationId,&#10;  "Status": "DOWN",&#10;  "Message": "Not able to connect to DataBase"&#10;}]'/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+	</sub-flow></mule>
