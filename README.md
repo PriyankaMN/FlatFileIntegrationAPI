@@ -42,6 +42,11 @@ Input Flat File Schema:
 
 <img width="467" alt="image" src="https://user-images.githubusercontent.com/66421109/216089491-d978f977-95f6-46bf-b2a7-c15ce99b2b9b.png">
 
+Project Specification Document:
+
+[File Integration POC.docx](https://github.com/PriyankaMN/FlatFileIntegrationAPI/files/10559240/File.Integration.POC.docx)
+
+
 Project Document:
 
 [fileIntegration_ProjectDocument.pdf](https://github.com/PriyankaMN/FlatFileIntegrationAPI/files/10558727/fileIntegration_ProjectDocument.pdf)
