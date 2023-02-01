@@ -14,8 +14,8 @@ Object_store:
   ttl: "1800"
   
 file:
-  Wpath: 'C:\Users\primahar\OneDrive - Capgemini\Desktop\Working'
-  Dpath : 'C:\Users\primahar\OneDrive - Capgemini\Desktop\Data'
+  Wpath: 'C:\Users\Desktop\Working'
+  Dpath : 'C:\Users\Desktop\Data'
   pattren: 'WH_*.dat'
   tbc: '30'
 
