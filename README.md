@@ -8,6 +8,12 @@ Problem Statement:
 Flat file data to be fetched from a legacy system, and integrate it with the database data to add the quantity and weight details for success records if "wh_live_ind" == "Y"
 else write the details in Flat file format back to the legacy system.
 
+Components Used:
+
+➔ RAML : To design API and validate incoming data to API.
+
+➔ MySQL Server DB
+
 Sample Input File: (.dat format)
 
 [WH_221223123047.dat.txt](https://github.com/PriyankaMN/FlatFileIntegrationAPI/files/10557974/WH_221223123047.dat.txt)
