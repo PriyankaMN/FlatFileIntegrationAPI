@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="main-suite.xml" />
+	<munit:test name="pollingFile_DataFolder-test" doc:id="bb46379a-7cc8-439f-ab5b-a3063975ef71" ignore="true">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="5816e87a-06ca-4f1f-83b7-f291267c586e" >
+				<munit:payload value="#[output application/octet-stream --- readUrl('classpath://pollingFileDataFoldertest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/octet-stream" />
+				<munit:attributes value="#[readUrl('classpath://pollingFileDataFoldertest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to pollingFile_DataFolder" doc:id="3180e379-2fa0-45ae-90ed-f322d8fbf394" name="pollingFile_DataFolder"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="07445a31-610b-4b76-8cd5-3aad0b02470e" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import pollingFileDataFoldertest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

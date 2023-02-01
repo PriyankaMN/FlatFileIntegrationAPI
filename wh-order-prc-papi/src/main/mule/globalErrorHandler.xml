@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="globalErrorHandlerError_Handler" doc:id="fd4d5e9f-512e-4ec5-b6be-5647dcadabe0" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4cb54e8f-67e8-4663-bf0e-3f8221f64494" type="STREAM_MAXIMUM_SIZE_EXCEEDED,EXPRESSION">
+			<ee:transform doc:name="Transform Message" doc:id="d78a2cd0-6a0c-4fcf-a4e0-735beee38140" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorType": error.errorType.identifier,
+	 "errorMessage": error.description
+	 }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="3cc28929-146a-4344-803b-efd6abf853cc" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"errorType": error.errorType.identifier,&#10;	 "errorMessage": error.description&#10;	 }]'/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6315be92-9571-4113-80b9-ecf855d77548" type="FILE:ACCESS_DENIED, FILE:CONNECTIVITY, FILE:FILE_ALREADY_EXISTS, FILE:FILE_LOCK, FILE:ILLEGAL_CONTENT, FILE:ILLEGAL_PATH, FILE:RETRY_EXHAUSTED, OS:INVALID_KEY, OS:KEY_ALREADY_EXISTS, OS:KEY_NOT_FOUND, OS:NULL_VALUE, OS:STORE_NOT_AVAILABLE">
+			<ee:transform doc:name="Transform Message" doc:id="109152fe-fef0-4536-9178-6f3036668845" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorType": error.errorType.identifier,
+	 "errorMessage": error.description
+	 }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="9fdcb4c6-2af5-47e6-96ff-6d54e6e2c655" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"errorType": error.errorType.identifier,&#10;	 "errorMessage": error.description&#10;	 }]'/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fda25c58-1955-4946-a15c-ffd6ec9a3fde" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="ba90e45f-87bf-4457-a9c0-c790d1cae161" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorType": error.errorType.identifier,
+	 "errorMessage": error.description
+	 }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="114e6c3a-f358-490b-a469-c5a8db245b23" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"errorType": error.errorType.identifier,&#10;	 "errorMessage": error.description&#10;	 }]'/>
+		</on-error-propagate>
+	</error-handler>
+</mule>

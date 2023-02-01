@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="pollingFile_DataFolder" doc:id="36e116f2-f11e-480d-98f6-70727a1dd5b8" >
+		<file:listener doc:name="On New or Updated File" doc:id="a0aac66b-4ee3-4664-b00f-2cfb8f97048e" config-ref="File_Config" directory="${file.Dpath}" watermarkMode="MODIFIED_TIMESTAMP" timeBetweenSizeCheck="${file.tbc}" timeBetweenSizeCheckUnit="SECONDS" moveToDirectory="${file.Wpath}">
+			<scheduling-strategy >
+				<cron expression="${cron.job}" />
+			</scheduling-strategy>
+			<file:matcher directories="EXCLUDE" filenamePattern="${file.pattren}"/>
+		</file:listener>
+		<logger level="INFO" doc:name="Start Logger" doc:id="a6f323ce-e371-4b0b-97e4-4b24f04fab7c" message='#["Start Flow -- "]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="467090c5-3ea4-4ee3-94cc-388c8cb6aa21" message='#["DataFolder"]'/>
+		<logger level="INFO" doc:name="End Logger" doc:id="75eb3b6e-623f-4dc7-8d00-fbdf4cc9fc53" message='#["End Flow -- "]' />
+		<error-handler ref="globalErrorHandlerError_Handler" />
+	</flow>
+	<flow name="pollingFile_WorkingFolder" doc:id="030d25d6-5eb9-47eb-80e6-aa7a7d8c2781" >
+		<file:listener doc:name="On New or Updated File" doc:id="ce773d64-d8c5-499c-baea-797722d1f67d" config-ref="File_Config" directory="${file.Wpath}" watermarkMode="MODIFIED_TIMESTAMP">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<logger level="INFO" doc:name="Start Logger" doc:id="47bc3817-fef5-4190-b2dd-5bfaf324cd55" message='#["Start Flow -- "]'/>
+		<set-variable value='#[(attributes.fileName splitBy ".")[0]]' doc:name="FileName" doc:id="bbe82e78-f476-4780-89a1-540fce17c819" variableName="FileName" />
+		<set-payload value="#[payload]" doc:name="SetPayloadMimeType_Schema" doc:id="33fc27ad-65a8-40d0-accd-5b8182f768dc" mimeType='application/flatfile; recordterminator=none; schemapath="schemas/CB.ffd"'/>
+		<ee:transform doc:name="FFD TO JSON" doc:id="8be74657-8565-4615-b650-ef6de2b56a9e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+	facility: $.facility,
+	whCode: $.whCode ,
+	whName: $.whName ,
+	orderNo: $.orderNo ,
+	itemNo: $.itemNo ,
+	quantity: $.quantity,
+	weight: $.weight ,
+	filler: $.filler
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value='#[payload]' doc:name="Set Payload" doc:id="a23b99ae-f72d-4e02-9e7d-dfd2ae44d3cc" />
+		<flow-ref doc:name="Flow Reference" doc:id="e9991aba-9690-450a-9891-59b94b796dbb" name="main_logic" />
+		<logger level="INFO" doc:name="End Logger" doc:id="c33df63b-ca7a-4003-b1dc-2b6f5c863fd8" message='#["End Flow -- "]' />
+		<error-handler ref="globalErrorHandlerError_Handler" />
+	</flow>
+</mule>

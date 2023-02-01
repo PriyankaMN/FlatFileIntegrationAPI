@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="main_logic" doc:id="add4a525-c163-4ae5-9eaa-0cbf4a6b947d" >
+		<set-variable value="#[payload]" doc:name="FFD Data" doc:id="9a20fad6-7dc7-425b-a064-ce1584f31578" variableName="data" />
+		<os:retrieve doc:name="Retrieve" doc:id="0a6fb0e6-9b30-4d22-a5f3-39fbc7a67003" key="retData" objectStore="Object_store">
+			<os:default-value><![CDATA[#["No Data"]]]></os:default-value>
+		</os:retrieve>
+		<choice doc:name="Choice" doc:id="973777a3-00bc-4d39-94f0-c29b3f05c6c7">
+			<when expression='#[payload == "No Data"]'>
+				<try doc:name="Try" doc:id="35b9ed14-597d-4cee-9b80-fe962c2b17ba">
+					<until-successful maxRetries="#[p('max.retries')]" doc:name="Until Successful" doc:id="d14e05b1-6a3f-4cbb-9168-d54701d64154" millisBetweenRetries="#[p('max.ms')]">
+						<http:request method="GET" doc:name="Request_SAPI" doc:id="4bc5b747-ae5f-4a94-936f-808a60f9c757" config-ref="HTTP_Request_configuration" path="${http.wh.path}" />
+				</until-successful>
+					<error-handler>
+						<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b5232c85-f858-4de6-b66c-d68f7296ff17" type="ANY">
+							<logger level="INFO" doc:name="Logger" doc:id="dc08347a-5b09-43e3-8072-b68b41faf30f" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"errorType": error.errorType.identifier,&#10;	 "errorMessage": error.description&#10;	 }]' />
+						</on-error-propagate>
+					</error-handler>
+				</try>
+				<set-variable value="#[payload.payload]" doc:name="Set Variable" doc:id="16bc4063-b3fa-4ebb-be09-ae84b5cbb77c" variableName="sapidata"/>
+				<os:store doc:name="Store" doc:id="e59adc41-7bc6-440b-aea4-34df2f252b1c" key="retData" objectStore="Object_store" />
+				<flow-ref doc:name="Flow Reference_'Y'Sub_Flow" doc:id="a574048e-9ff2-4b35-9d5e-89b3be8b11d6" name="implementationYSub_Flow" />
+				<flow-ref doc:name="Flow Reference_'N'Sub_Flow" doc:id="ae01bdea-0636-45c5-95f9-08130e36651c" name="implementationNSub_Flow"/>
+			</when>
+			<otherwise>
+				<set-variable value="#[payload.payload]" doc:name="Set Variable" doc:id="97936eaa-a004-49eb-998e-15dba136bb4d" variableName="sapidata"/>
+				<flow-ref doc:name="Flow Reference_'Y'Sub_Flow" doc:id="7070d8fc-bd80-48f0-b885-c5ae46f34a7d" name="implementationYSub_Flow" />
+				<flow-ref doc:name="Flow Reference_'N'Sub_Flow" doc:id="89c48ad1-5ba4-4734-abcc-87e00b875c66" name="implementationNSub_Flow"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="implementationYSub_Flow" doc:id="c244186d-8b6a-451b-b0a1-f062cdfab305" >
+		<set-payload value="#[vars.sapidata]" doc:name="Set Payload DB DATA" doc:id="43eeda15-49ee-4130-9b06-89922d465ec2" />
+		<ee:transform doc:name="wh_live = Y" doc:id="04b4baf1-77e4-4795-8e1b-33682cbceb1c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var comppayload = {"payload1" : vars.data , "payload2" : payload } 
+
+var data = comppayload.payload2 filter ($.wh_live_ind == "Y") map ((element) ->{
+    (comppayload.payload1 filter $.whCode ~= element.warehouse_code)
+})
+var Ydata = data filter ($.facility != null)
+---
+Ydata]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Add quality and weight" doc:id="ac95b365-b63e-4538-aacd-7a615d04636e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> {
+    "facility": item.facility,
+    "whCode": item.whCode,
+    "whName": item.whName,
+    "orderNo": item.orderNo,
+    "itemNo": item.itemNo,
+    "quantity": sum(item.*quantity),
+    "weight": sum(item.*weight),
+    "filler": item.filler
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="JSON to XML" doc:id="a51143d3-6485-4c60-b85f-40122cabbdc4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	whDetails: {
+		(payload map ( payload01 , indexOfPayload01 ) -> {
+			whDetail: {
+				facility: payload01.facility as Number default null,
+				whCode: payload01.whCode as Number default null,
+				whName: payload01.whName as String default null,
+				orderNo: payload01.orderNo as Number default null,
+				itemNo: payload01.itemNo as Number default null,
+				quantity: payload01.quantity as Number default null,
+				weight: payload01.weight as Number default null,
+				filler: payload01.filler default ""
+			}
+		})
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write XML" doc:id="4e35af43-748f-439f-aab0-203871ed5a90" config-ref="File_Config" path='#["C:\\Users\\primahar\\AnypointStudio\\Project\\papi-try\\src\\main\\resources\\api\\" ++ vars.FileName ++ ".xml"]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="8f72527e-2b93-452e-9c89-359c48e340bf" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="implementationNSub_Flow" doc:id="2e4bc248-0c68-44f4-8b95-86c2b2019be1" >
+		<set-payload value="#[vars.sapidata]" doc:name="Set Payload DB DATA" doc:id="b4b35476-d469-4bfc-ae28-d07b136d1fda" />
+		<ee:transform doc:name="wh_live = N" doc:id="2c1a3b55-18c1-4bd9-aa08-ab1102e28df1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var comppayload = {"payload1" : vars.data , "payload2" : payload } 
+
+
+var data1 = comppayload.payload2 filter ($.wh_live_ind == "N") map ((element) ->{
+    (comppayload.payload1 filter $.whCode ~= element.warehouse_code)
+})
+
+var Ndata = data1 filter ($.facility != null)
+---
+Ndata]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="JSON to FFD" doc:id="4aade1c7-cccb-4294-82d7-f0cda4ff8ed4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/flatfile schemaPath = "schemas/CB.ffd"
+---
+payload map
+{
+	facility: $.facility,
+	whCode: $.whCode ,
+	whName: $.whName ,
+	orderNo: $.orderNo ,
+	itemNo: $.itemNo ,
+	quantity: $.quantity,
+	weight: $.weight ,
+	filler: $.filler
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write Error FFD" doc:id="50c5991b-279e-4f1c-8819-4e656234ab32" config-ref="File_Config" path='#["C:\\Users\\primahar\\AnypointStudio\\Project\\papi-try\\src\\main\\resources\\api\\" ++ vars.FileName ++ "_error.dat"]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="e212039d-80aa-41ec-8159-500ac32f6444" message="#[payload]"/>
+	</sub-flow>
+	
+</mule>

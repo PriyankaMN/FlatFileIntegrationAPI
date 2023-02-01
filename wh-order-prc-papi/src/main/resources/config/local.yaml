@@ -1,0 +1,27 @@
+http:
+  host: "0.0.0.0"
+  port: "8082"    
+  basepath: "/api/"
+  wh:
+    host: "0.0.0.0"
+    port: "8081"
+    path: "whInfo"
+  
+apiId: ""
+  
+Object_store:
+  interval: "3600"
+  ttl: "1800"
+  
+file:
+  Wpath: 'C:\Users\primahar\OneDrive - Capgemini\Desktop\Working'
+  Dpath : 'C:\Users\primahar\OneDrive - Capgemini\Desktop\Data'
+  pattren: 'WH_*.dat'
+  tbc: '30'
+
+cron:
+  job: '0 0/5 * ? * * *'
+
+max:
+  retries : '3'
+  ms: '60000'

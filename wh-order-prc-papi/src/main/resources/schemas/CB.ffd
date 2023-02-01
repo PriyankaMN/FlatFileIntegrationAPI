@@ -1,0 +1,11 @@
+form: COPYBOOK
+id: 'FILE-DETAILS'
+values: 
+- { name: 'facility', type: String, length: 2 }
+- { name: 'whCode', type: String, length: 2 }
+- { name: 'whName', type: String, length: 3 }
+- { name: 'orderNo', type: String, length: 12 }
+- { name: 'itemNo', type: String, length: 8 }
+- { name: 'quantity', type: String, length: 2 }
+- { name: 'weight', type: String, length: 4 }
+- { name: 'filler', type: String, length: 7 }

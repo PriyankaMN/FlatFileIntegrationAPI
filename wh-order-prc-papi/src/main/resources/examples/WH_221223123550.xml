@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<whDetails>
+  <whDetail>
+    <facility>33</facility>
+    <whCode>33</whCode>
+    <whName>JRP</whName>
+    <orderNo>523357</orderNo>
+    <itemNo>98765</itemNo>
+    <quantity>12</quantity>
+    <weight>23</weight>
+    <filler/>
+  </whDetail>
+  <whDetail>
+    <facility>40</facility>
+    <whCode>41</whCode>
+    <whName>SBS</whName>
+    <orderNo>923551</orderNo>
+    <itemNo>57345</itemNo>
+    <quantity>1</quantity>
+    <weight>12</weight>
+    <filler/>
+  </whDetail>
+</whDetails>

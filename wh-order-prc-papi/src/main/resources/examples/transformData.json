@@ -1,0 +1,22 @@
+[
+    {
+        "facility": "33",
+        "whCode": "33",
+        "whName": "JRP",
+        "orderNo": "523357",
+        "itemNo": "98765",
+        "quantity": 12,
+        "weight": 23,
+        "filler": null
+    },
+    {
+        "facility": "40",
+        "whCode": "41",
+        "whName": "SBS",
+        "orderNo": "923551",
+        "itemNo": "57345",
+        "quantity": "01",
+        "weight": "0012",
+        "filler": null
+    }
+]

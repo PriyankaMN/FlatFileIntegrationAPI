@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="860c1164-6c15-4d9e-8486-abbda14ba2d2" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="035bb9fe-2549-4fb1-92ca-b5ab3c501b06" basePath="${http.basepath}" >
+		<http:request-connection host="${http.wh.host}" port="${http.wh.port}" />
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d1e54238-c314-4caa-bce0-37704f7e2a7f" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="b9eb61a8-335f-4f61-8cae-b178b75f201b" entryTtl="${Object_store.ttl}" expirationInterval="${Object_store.interval}" expirationIntervalUnit="SECONDS" />
+	<configuration-properties doc:name="Configuration properties" doc:id="2566d1f6-aba8-47c6-bf43-27a6cd80546c" file="config/${mule.env}.yaml" />	
+	
+</mule>
